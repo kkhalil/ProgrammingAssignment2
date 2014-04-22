@@ -22,28 +22,30 @@
 ##########################################################################
 
 makeCacheMatrix <- function(x = matrix()) {
-   ## "inv" store the inverse of the matrix 'x' in parent environment
+   ## "inv" stores the inverse of the matrix 'x'
    ## assign NULL to "inv" to indicate that it is not calculated yet
    inv <- NULL   
    
-   ## The function set  takes a new matrix "y" and assign it to "x"
-   ## and set "inv" to NULL to indicate that x has been changed
+   ## The function 'set' takes a new matrix 'y' and assign it to the matrix 'x'
+   ## and set 'inv' to NULL to indicate that x has been changed
+   ## Note: 'x' and 'inv' inside 'set' are the variables (in parent environment)
+   ## of the function makwCacheMatrix where we access to them via '<<-' 
    set <- function(y) {
       x <<- y
-      inv <<- NULL
+      inv <<- NULL      
    }
    
-   ## get return the actual matrix "x"
+   ## get return the matrix 'x' of the parent environment.
    get <- function() x
    
-   ## setinverse takes "newinv" the new inverse of "x" calculated by the 
-   ## function cacheSolve and assign it to the stored inverse "inv"
+   ## 'setinverse' takes 'newinv' the new inverse of 'x' calculated by the 
+   ## function 'cacheSolve' and assigns it to 'inv' in parent environment
    setinverse <- function(newinv) inv <<- newinv
    
-   ## getinverse returns "inv" the store inverse of "x"
+   ## 'getinverse' returns 'inv' the store inverse of 'x'
    getinverse <- function() inv
    
-   ## return the list of four functions set, get, setinverse and getinverse
+   ## return a list of the functions 'set', 'get', 'setinverse' and 'getinverse'
    list(set = set, get = get,
         setinverse = setinverse,
         getinverse = getinverse)
@@ -69,7 +71,7 @@ makeCacheMatrix <- function(x = matrix()) {
 cacheSolve <- function(x, ...) {
    ## Return a matrix that is the inverse of 'x'
    
-   ## get the value of stored inverse of 'x' 
+   ## invoke 'x$getinverse()' to get the value of stored inverse of 'x' 
    inv <- x$getinverse()
 
    ## test if the stored inverse is ready ('inv' is not NULL), so return it
@@ -81,7 +83,7 @@ cacheSolve <- function(x, ...) {
    ## As the inverse is not calculated yet, invoke 'x$get' to get the matrix 
    ## value and then calculate its inverse by using the function 'solve'
    data <- x$get()
-   inv<- solve(data, ...)
+   inv <- solve(data, ...)
    
    ## save the new calculated inverse by invoking 'x$setinverse' function
    x$setinverse(inv)
